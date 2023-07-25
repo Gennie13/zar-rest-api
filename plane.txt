@@ -1,0 +1,29 @@
+zarin site////////////////////////////////////////////////////
+api/v1/giftBag
+
+
+hereglegch: 
+user   ---> zar oruuldag, uurinhuu zarig ustgah, zasvarlah, hereglegch hoorondoo holbogdoh bolomjotoi
+admin  ---> zar oruulah, usgah, zasah, user ustgah,
+
+
+MODEL ***********************************
+1. zarCategory -> baraani turuluur n angilah
+2. zarModel, -> tuhain baraag haana baigaag angilah -> mongold, solongosd, ypon etc...
+3. userModel -> default: "user" baina, admin garaar zasvar hiiheer
+
+ROUTER************************************
+1. zarCategory -> api/v1/giftBag/categories     -> buh category
+			api/v1/giftBag/categories/:id ---> tuhain category-toi hamaatai zaruud garna
+			api/v1/giftBag/:zarid/category ---> tuhain zariin medeelel
+
+2. zarModel, ->  api/v1/giftBag/zar     -> buh zar
+			api/v1/giftBag/:zarid/category ---> api/v1/giftBag/zar/:id ---> tuhain zar-toi hamaatai
+			 
+3. userModel -> api/v1/giftBag/login
+		api/v1/giftBag/register
+		api/v1/giftBag/forgot-password
+
+
+????????????????????????????????
+createId  -protect ?
