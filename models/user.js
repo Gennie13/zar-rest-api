@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const ZarModel = require("./zarModel");
 
 
 const UserSchema = new mongoose.Schema({
@@ -34,7 +35,17 @@ const UserSchema = new mongoose.Schema({
         default: Date.now
     },
 
+},{
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
 });
+
+UserSchema.virtual("Zaruud", {
+    ref: "Zaruud",
+    foreignField: "createUser",
+    localField: "_id",
+    justOne: false
+})
 
 //password + salt
 UserSchema.pre("save", async function(next){

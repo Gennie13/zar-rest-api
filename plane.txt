@@ -26,4 +26,17 @@ ROUTER************************************
 
 
 ????????????????????????????????
-createId  -protect ?
+exports.deleteCategory = asyncHandler(async(req, res, next) => {
+    const reqId = req.params.id;
+    const catDel = await CategoryModel.findByIdAndDelete(req.params.id);
+    const zarDel = await ZarModel.find({category: req.params.id});
+    const zarId = await zarDel.map(item => item._id.toString());
+    zarDel.deleteMany();
+    const comDel = await CommentModel.find({zarId: zarId}).deleteMany();
+    res.status(200).json({
+        success: true,
+        deleteCat: catDel,
+        deleteZar: zarDel,
+        deleteComments: comDel
+    })
+})

@@ -8,6 +8,7 @@ exports.createComment = asyncHandler ( async (req, res, next) => {
     if(!req.body.userId && !req.body.zarId && !req.body.comment){
         throw new MyError("Та мэдээллээ шалгаж үзнэ үү?", 400)
     };
+    req.body.userId = req.userId;
     // console.log(req.params._id)
     // req.body.userId = req.params._id;
     // console.log(req.body.userId)
@@ -68,9 +69,9 @@ exports.deleteComment = asyncHandler(async(req, res, next) => {
         throw new MyError( req.params.id + " ID-тай коммэнт шалгана уу? Устгаж чадсангүй", 403)
     };
 
-    // if( comment.createUser.toString() !== req.userId && req.userRole !== "admin"){
-    //     throw new MyError("Та зөвхөн өөрийнхөө номыг устгах эрхтэй", 404)
-    // }
+    if( comment.userId.toString() !== req.userId && req.userRole !== "admin"){
+        throw new MyError("Та зөвхөн өөрийнхөө коммэнт устгах эрхтэй", 404)
+    }
     comment.deleteOne();
 
     res.status(200).json({

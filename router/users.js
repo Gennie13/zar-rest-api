@@ -8,9 +8,10 @@ const {
     updateUser,
     deleteUser,
     postUserForgotPassword,
-    postUserResetPassword
+    postUserResetPassword,
+    getUserZaruud
 } = require("../controller/useerController");
-const {getUserZaruud} = require("../controller/zarController");
+// const {getUserZaruud} = require("../controller/zarController");
 const router = express.Router();
 const {protect, authorize} = require("../middleware/protect");
 
@@ -25,7 +26,8 @@ router.route("/").get(authorize("admin") ,getUsers);
 router.route("/:id")
                 .get(authorize("admin", "user"), getUser)
                 .put(authorize("admin", "user"), updateUser)
-                .delete(authorize("admin"), deleteUser);
-router.route("/:id/zaruud").get(getUserZaruud);
+                .delete(authorize("admin","user"), deleteUser);
+// router.route("/:id/categories").get(getUserZaruud);
+router.route("/:userId/zaruud").get(getUserZaruud);
 
 module.exports = router;

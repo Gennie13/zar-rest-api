@@ -73,21 +73,21 @@
         "tailbar": "honda  fit арын гэрэл",
         "createDate": "2023-07-22T13:28:55.344Z",
         "id": "64bbd997280b01f0d7dc1156"
-    },
-    {
-        "_id": "64bbeddb70c912afcd40737c",
-        "name": "Land Cruiser Prado",
-        "category": "64bab505bbca45066a52c1cd",
-        "mongoldeseh": false,
-        "location": "Япон",
+    },{
+        "name": "Өвчин намдаагч",
+        "category": "64bab597bbca45066a52c1d9",
+        "createUser": "64bdeb34b14f650b55607203",
+        "mongoldeseh": true,
+        "location": "Дамбадаржаа",
         "uploadPhoto": "no-photo.jpg",
-        "price": 89000000,
-        "newOrSecond": "second",
-        "phoneNumber": 99394585,
-        "tailbar": "Үйлдвэрээсээ гарсан шинэ тэрэг зарна",
-        "createDate": "2023-07-22T14:55:23.123Z",
-        "createUser": "64bd12613d58cf77a93458d3",
-        "id": "64bbeddb70c912afcd40737c"
+        "price": 10000,
+        "newOrSecond": "new",
+        "phoneNumber": 94558785,
+        "tailbar": "Нийт 60 ширхэг",
+        "watchCount": 0,
+        "_id": "64c28fa283e8457f807069cc",
+        "createDate": "2023-07-27T15:39:14.581Z",
+        "id": "64c28fa283e8457f807069cc"
     },
     {
         "_id": "64bbee78d5c58c0557d9aed0",

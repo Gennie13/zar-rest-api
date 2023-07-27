@@ -17,6 +17,10 @@ const CategorySchema = new mongoose.Schema({
         default: "no-photo.jpg"
     },
     averagePrice: Number,
+    watchCount: {
+        type: Number,
+        default: 0,
+    },
 
 },
 {toJSON:{virtuals:true}, toObject:{virtuals: true}}
@@ -28,12 +32,6 @@ CategorySchema.pre("save", function(next){
     next()
 });
 
-// CategorySchema.pre("deleteMany", { document: false, query: true }, async function(next){
-//     const test =  await mongoose.model(zarModel).deleteMany({ category: this._conditions._id })
-//     console.log("aldaa  - ------> "+test)
-//     next()
-// } )
-
 CategorySchema.methods.getViewCount = function() {
     let viewCount = "0";
     return viewCount++
@@ -42,8 +40,8 @@ CategorySchema.methods.getViewCount = function() {
 CategorySchema.virtual("zaruud",{
     ref: "Zaruud",
     //category derh dotood tulhuur
-    localField: "_id",
-    foreignField: "category",
+    localField: "_id", //categoriin id
+    foreignField: "category", //Zaruud model deerh talbarin ner
     justOne:  false
 });
 module.exports = mongoose.model("Category", CategorySchema);

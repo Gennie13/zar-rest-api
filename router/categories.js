@@ -23,6 +23,5 @@ router.route("/:id")
                     .get(getCategory)
                     .put(protect, authorize("admin"), updateCategory)
                     .delete(protect, authorize("admin"), deleteCategory);
-// router.route("/:id/zaruud").get(getCatZaruud)
 
 module.exports = router;

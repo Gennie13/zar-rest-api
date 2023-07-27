@@ -2,6 +2,7 @@ const { query } = require("express");
 const mongoose = require("mongoose");
 const CategoryModel = require("../models/categoryModel");
 const ZarModel = require("../models/zarModel");
+const CommentModel = require("../models/comment");
 //aldaa tsatsah system-msj, code -
 const MyError = require("../utils/myError")
 const asyncHandler = require("express-async-handler");
@@ -39,14 +40,11 @@ exports.getCategory = asyncHandler ( async ( req, res, next ) => {
     if(!category){
         throw new MyError(req.params.id + " категорын ID шалгаж үзнэ үү? ", 401)
     }
-    // req.body.viewCount = '0';
+   
     //categoriig get hiisneer n tooloh
-    // category.name -= "-";
-    // category.save()
-    // viewCount += 1;
-    const viewCount = category.getViewCount();
-    // viewCount = 1
-
+    category.watchCount += 1;
+    category.save()
+    
     res.status(200).json({
         success: true,
         // viewCount,
@@ -72,30 +70,15 @@ exports.updateCategory = asyncHandler(async(req, res, next) => {
 exports.deleteCategory = asyncHandler(async(req, res, next) => {
     const reqId = req.params.id;
     const catDel = await CategoryModel.findByIdAndDelete(req.params.id);
-    
-    const zarDel = await ZarModel.find({category: req.params.id}).deleteMany()
-    // if(!categoryDel) {
-    //     throw new MyError( categoryDel + " категорын ID шалгана уу? Устгаж чадсангүй", 403)
-    // };
-    // for (const categoryId of categoryDel) {
-    //     await mongoose.zarModel.deleteMany( { category: this._conditions._id} );
-    //     categoryId.deleteMany()
-    // }
-   
-    // await CategoryModel.deleteMany();
-    // await zarModel.deleteMany({ category: categoryDel._id });
-    
-    //Zaruudin hamt ustgadag bolgoh
-    // for(let model in req.body.zaruud){
-    //     model.deleteOne()
-    // };
-    // console.log("zar->>>>"+category.zaruud)
+    const zarDel = await ZarModel.find({category: req.params.id});
+    const zarIds = await zarDel.map(item => item._id.toString());
+    await ZarModel.deleteMany({ _id: { $in: zarIds } });
+    const comDel = await CommentModel.deleteMany({zarId: { $in: zarIds }});
 
-    // const userName = await req.userName
-    // console.log(category.zaruud)
     res.status(200).json({
         success: true,
-        data: catDel,
-        deleteUser: zarDel
+        deleteCat: catDel,
+        deleteZar: zarDel,
+        deleteComments: comDel
     })
 })

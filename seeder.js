@@ -17,12 +17,14 @@ mongoose.connect( process.env.MONGODB_URL, {
 const categories = JSON.parse(fs.readFileSync(__dirname + "/data/categoryData.js", "utf-8"));
 const zaruud = JSON.parse(fs.readFileSync(__dirname + "/data/zarData.js", "utf-8"));
 const users = JSON.parse(fs.readFileSync(__dirname + "/data/userData.js", "utf-8"));
+const comments = JSON.parse(fs.readFileSync(__dirname + "/data/commentsData.js", "utf-8"));
 
 const importData = async() => {
     try{
         await Category.create(categories);
         await User.create(users);
         await Zar.create(zaruud);
+        await Comment.create(comments);
         console.log("Датаг импортолж дууссан")
     } catch(err) {
         console.log(err)
@@ -33,6 +35,7 @@ const deleteData = async() => {
         await Category.deleteMany();
         await Zar.deleteMany();
         await User.deleteMany();
+        await Comment.deleteMany();
         console.log("Датаг устгаж дууссан")
     } catch(err) {
         console.log(err)

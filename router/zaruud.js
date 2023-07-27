@@ -5,7 +5,8 @@ const {
     getZar,
     updateZar,
     deleteZar,
-    getCatZaruud
+    getCatZaruud,
+    getZarComments
 } = require("../controller/zarController");
 const router = express.Router();
 //protect export hiihde namedeer n export hiisen {}
@@ -19,7 +20,8 @@ router.route("/:id")
     .get(getZar)
     .put(protect,authorize("admin", "user"), updateZar)
     .delete(protect,authorize("admin", "user"), deleteZar);
-router.route("/:categoryId/zaruud").get(getCatZaruud)
+// router.route("/:categoryId/zaruud").get(getCatZaruud);
+router.route("/:id/comments").get(getZarComments);
 
 
 module.exports = router;

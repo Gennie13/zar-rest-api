@@ -1,4 +1,8 @@
+const { query } = require("express");
 const UserModel = require("../models/user");
+const CategoryModel = require("../models/categoryModel");
+const ZarModel = require("../models/zarModel");
+const CommentModel = require("../models/comment");
 const MyError = require("../utils/myError");
 const asyncHandler = require("../middleware/asyncHandler");
 const sendEmail = require("../utils/email");
@@ -18,6 +22,7 @@ exports.createRegisterUser = asyncHandler(async(req, res, next) => {
 
 //login
 exports.login = asyncHandler(async(req, res, next) => {
+    
     const {email, password} = req.body;
 
     if(!email || !password){
@@ -94,29 +99,43 @@ exports.getUser = asyncHandler ( async ( req, res, next ) => {
     })
 })
 exports.updateUser = asyncHandler(async(req, res, next) => {
-    // req.body.updateUser = req.userId;
-    const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-    });
+    const user = await UserModel.findById(req.params.id);
     if(!user) {
-        throw new MyError( req.params.id + " хэрэглэгчийн мэдээллээ шалгана уу? Засварлаж чадсангүй", 402)
+        throw new MyError( req.params.id + " хэрэглэгчийн мэдээллээ шалгана уу? Засварлаж чадсангүй", 400)
     };
-    
+    if( user.createUser !== req.userId && req.userRole !== "admin"){
+        throw new MyError("Та зөвхөн өөрийнхөө мэдээллийг өөрчлөх эрхтэй", 401)
+    }
+    req.body.updateUser = req.userId;
+    for(let att in req.body){
+        user[att] = req.body[att]
+    };
+    user.save();
     res.status(200).json({
         success: true,
         data: user
     })
 })
 exports.deleteUser = asyncHandler(async(req, res, next) => {
-    // req.body.deleteUser = req.userId;
-    const user = await UserModel.findByIdAndDelete(req.params.id);
-    if(!user) {
+    req.body.deleteUser = req.userId;
+    if(!req.params.id) {
         throw new MyError( req.params.id + " хэрэглэгчийн мэдээллээ шалгана уу? Устгаж чадсангүй", 403)
     };
+    
+    const user = await UserModel.findById(req.params.id);
+    // if( user.id !== req.userId || req.userRole !== "admin"){
+    //     throw new MyError("Та зөвхөн өөрийнхөө домайн хаягийг устгах эрхтэй", 404)
+    // };
+    user.deleteOne();
+    
+    const zaruud = await ZarModel.find({createUser: req.body.deleteUser}).deleteMany();
+    const commentsZar = await CommentModel.find({userId: req.body.deleteUser}).deleteMany();
+
     res.status(200).json({
         success: true,
-        data: user,
+        userDelete: user,
+        zaruud,
+        commentsZar
     })
 })
 
@@ -155,6 +174,7 @@ exports.postUserForgotPassword = asyncHandler(async (req, res, next) => {
 
 //reset-password
 exports.postUserResetPassword = asyncHandler(async (req, res, next) => {
+
     if (!req.body.resetToken || !req.body.password) {
         throw new MyError("Та шинэ нууц үг болон токеноо оруулна уу?", 400);
     }
@@ -184,4 +204,18 @@ exports.postUserResetPassword = asyncHandler(async (req, res, next) => {
         token: token,
         user: user
     });
+});
+
+// /users/:createUserId/zaruud
+exports.getUserZaruud = asyncHandler ( async ( req, res, next ) => {
+    req.query.createUser = req.userId
+    const userZar = await UserModel.findById(req.userId).populate({
+        path: "Zaruud",
+        select: "name tailbar createDate"
+    })
+    res.status(200).json({
+        success: true,
+        count: userZar.length,
+        data: userZar
+    })
 });

@@ -15,9 +15,6 @@ const CommentSchema = new mongoose.Schema({
         required: true,
         maxlength: [500, "Тайлбар хамгийн уртдаа 500 байна"],
         set: comment => comment.toLowerCase()
-
-
-
     },
     createdAt:{
         type: Date,
@@ -25,7 +22,6 @@ const CommentSchema = new mongoose.Schema({
     },
 
 });
-
 
 
 

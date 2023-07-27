@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+const express = require("express");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const {transliterate} = require("transliteration");
 const CategoryModel = require("./categoryModel");
+const CommentModel = require("./comment");
 
 // const UserModel;
 
@@ -68,6 +70,10 @@ const ZarShema = new mongoose.Schema({
         required: [true, "Зарын тайлбарийг оруулна уу?"],
         maxlength: [500, "Зарын тайлбар хамгийн уртдаа 500 байна"]
     },
+    watchCount: {
+        type: Number,
+        default: 0,
+    },
 },{
     toJSON: {virtuals: true}, toObject:{virtuals: true}
 });
@@ -78,6 +84,13 @@ ZarShema.virtual("busad-zaruud", {
     localField: "category",
     justOne: false
 });
+ZarShema.virtual("comments", {
+    ref: "Comment",
+    localField: "_id",
+    foreignField: "zarId",
+    justOne: false
+});
+
 
 
 ZarShema.pre("save", function(next){

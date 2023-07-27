@@ -2,7 +2,7 @@ const MyError = require("../utils/myError");
 const asyncHandler = require("./asyncHandler");
 
 exports.Logger = asyncHandler(async (req, res, next) => {
-    console.log("cookies--->" , req.cookies)
+    console.log("cookies--->" , req.cookies.token)
     // let token;
     // console.log(req.userId +"--------------loggerUserId")
     // if(!req.headers.authorization){
@@ -12,6 +12,6 @@ exports.Logger = asyncHandler(async (req, res, next) => {
     // let user = jwt.verify(token, process.env.JWT_Secret);
     // req.userId = user.id;
     // console.log(user); 
-    console.log(`${req.method} ${req.protocol} `)
-    next() 
+    console.log(`${req.method} ${req.protocol} `);
+    next() ;
 });

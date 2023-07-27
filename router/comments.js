@@ -13,14 +13,13 @@ const {
 } = require("../middleware/protect");
 
 
-
 //  /api/v1/comments
 router.route("/")
     .get(getComments)
-    .post(createComment);
+    .post(protect, authorize("admin", "user"), createComment);
 router.route("/:id")
     .get(getComment)
-    .put(updateComment)
-    .delete(deleteComment);
+    .put(protect, authorize("admin", "user"), updateComment)
+    .delete(protect, authorize("admin", "user"), deleteComment);
 
 module.exports = router;

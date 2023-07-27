@@ -3,7 +3,8 @@ const { query } = require("express");
 const MyError = require("../utils/myError")
 const asyncHandler = require("express-async-handler");
 const ZarModel = require("../models/zarModel");
-const userModel = require("../models/user");
+const UserModel = require("../models/user");
+const CommentsModel = require("../models/comment");
 const CategoryModel = require("../models/categoryModel");
 const {Logger} = require("../middleware/logger");
 
@@ -50,15 +51,20 @@ exports.createZar = asyncHandler ( async (req, res, next) => {
     })
 });
 exports.getZar = asyncHandler ( async ( req, res, next ) => {
-    const zar = await ZarModel.findById(req.params.id).populate("busad-zaruud");
+    let zar = await ZarModel.findById(req.params.id).populate("busad-zaruud");
     if(!zar){
         throw new MyError(req.params.id + " категорын ID шалгаж үзнэ үү? ", 401)
     }
+    zar.watchCount += 1;
+    zar.save()
+
+    
     res.status(200).json({
         success: true,
         data: zar
     })
 })
+
 exports.updateZar = asyncHandler(async(req, res, next) => {
 
     const zar = await ZarModel.findById(req.params.id);
@@ -85,6 +91,7 @@ exports.updateZar = asyncHandler(async(req, res, next) => {
     })
 })
 exports.deleteZar = asyncHandler(async(req, res, next) => {
+    // console.log(req.params.id)
     req.body.deleteUser = req.userId;
     const zar = await ZarModel.findById(req.params.id);
     if(!zar) {
@@ -94,51 +101,34 @@ exports.deleteZar = asyncHandler(async(req, res, next) => {
     if( zar.createUser.toString() !== req.userId && req.userRole !== "admin"){
         throw new MyError("Та зөвхөн өөрийнхөө номыг устгах эрхтэй", 404)
     }
+    
     zar.deleteOne();
+
+    const zarComments = await CommentsModel.find({zarId: req.params.id}).deleteMany();
 
     res.status(200).json({
         success: true,
-        data: zar,
+        deleteZar: zar,
+        deleteComments: zarComments
     })
 })
 
-//   /:categoryId/zaruud
-exports.getCatZaruud = asyncHandler ( async ( req, res, next ) => {
-    let query;
-    const select = req.query.select;
-    const sort = req.query.sort;
-    ['select', 'sort'].forEach( el => delete req.query[el])
 
-    if(req.params.categoryId) {
-        query = ZarModel.find({category: req.params.categoryId}).populate({
-            path: "category",
-            select: "name"
-        });
+
+
+
+//  /zaruud/:zarId/comments
+exports.getZarComments = asyncHandler ( async ( req, res, next ) => {
+    const zar = await ZarModel.findById(req.params.id).populate({
+        path: "comments",
+        select: "comment createdAt"
+    });
+    console.log(zar.comments)
+    if(!zar){
+        throw new MyError(req.params.id + " категорын ID шалгаж үзнэ үү? ", 401)
     }
-    
-    const zaruud = await query;
     res.status(200).json({
         success: true,
-        count: zaruud.length,
-        data: zaruud,
+        data: zar
     })
-});
-
-// /users/:createUserId/zaruud
-// ????????????????????????????????????????????????????????????????????
-//neg herelegchiin uusgesen zaruudig harah
-exports.getUserZaruud = asyncHandler ( async ( req, res, next ) => {
-    req.query.createUser = req.userId
-    const userZar = await ZarModel.find(req.query).populate({
-        path: "category"
-    })
-    console.log(userZar)
-    // req.query.createUser = await req.userId;
-    // console.log(req.query+"------->zarcontroller");
-    // const zaruud = await ZarModel.find(req.query);
-    res.status(200).json({
-        success: true,
-        count: userZar.length,
-        data: userZar
-    })
-});
+})
