@@ -70,6 +70,9 @@ exports.updateCategory = asyncHandler(async(req, res, next) => {
 exports.deleteCategory = asyncHandler(async(req, res, next) => {
     const reqId = req.params.id;
     const catDel = await CategoryModel.findByIdAndDelete(req.params.id);
+    if(!req.params.id){
+        throw new MyError(`${req.params.id} шалгаж үзнэ үү?`, 400)
+    }
     const zarDel = await ZarModel.find({category: req.params.id});
     const zarIds = await zarDel.map(item => item._id.toString());
     await ZarModel.deleteMany({ _id: { $in: zarIds } });
